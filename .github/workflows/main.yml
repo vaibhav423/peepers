@@ -3,29 +3,27 @@ name: Build Android App
 on:
   push:
     branches:
-      - master # Change this to your default branch if it's not main
+      - master  # Change this to your default branch
+  pull_request:
+    branches:
+      - master  # Change this to your default branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
-    - name: Check out code
-      uses: actions/checkout@v3  # Use the latest version
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'  # Set to Java 11
+          distribution: 'adopt'
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
-      with:
-        java-version: '11'  # Specify the Java version
-        distribution: 'adopt'  # Add the distribution type (adopt, zulu, temurin, etc.)
+      - name: Change permissions for Gradle wrapper
+        run: chmod +x ./gradlew  # Ensure gradlew has execute permissions
 
-    - name: Build the app
-      run: |
-         # Change to the correct directory (fixed the typo)
-         ./gradlew assembleDebug --stacktrace  # Get detailed output for troubleshooting
-
-    - name: Upload APK
-      uses: actions/upload-artifact@v3  # Updated to the latest version
-      with:
-        name: app-debug.apk
-        path: app/build/outputs/apk/debug/app-debug.apk  # Adjust the path if necessary
+      - name: Build the app
+        run: ./gradlew assembleDebug --stacktrace  # Build the app
