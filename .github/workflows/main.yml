@@ -1,0 +1,31 @@
+name: Build Android App
+
+on:
+  push:
+    branches:
+      - master # Change this to your default branch if it's not main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3  # Use the latest version
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '11'  # Specify the Java version
+        distribution: 'adopt'  # Add the distribution type (adopt, zulu, temurin, etc.)
+
+    - name: Build the app
+      run: |
+         # Change to the correct directory (fixed the typo)
+         ./gradlew assembleDebug --stacktrace  # Get detailed output for troubleshooting
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v3  # Updated to the latest version
+      with:
+        name: app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk  # Adjust the path if necessary
